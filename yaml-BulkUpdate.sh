@@ -1,9 +1,12 @@
 #!/bin/sh
 # Make sure you have 'git & yamllint' installed on your system before going any further !
-WD="$HOME/test"
+WD="$HOME/Yaml-BulkUpdate"
 	if [[ ! -d $WD || $(ls $WD) == "" ]];then
 	    mkdir -p $WD
-	    echo "$WD is empty, please clone at least one project in it !!"
+	    cat <<- EOF
+		"$WD is empty, please clone at least one project and 
+		 copy .yamllint file in it for syntax checking !!"
+		EOF
 	fi
 FILE_LIST="$WD/.list"
 	if [[ ! -f $FILE_LIST ]]; then
@@ -161,7 +164,7 @@ function deploy_update {
 function syntax_checker {
 		for i in $(find $WD/$line/ci/k8s/ -iname "*$line*deployment.yaml")
         do
-			yamllint $i >> $LOG_FILE_SUCCESS
+			yamllint -c $WD/.yamllint $i >> $LOG_FILE_SUCCESS
 			echo "---------------------------------"
 		done
 }

@@ -118,8 +118,8 @@ function deploy_update {
 }
 function syntax_checker {
 		for i in $(find $WD/$line/ci/k8s/ -iname "*$line*deployment.yaml")
-        do
-			yamllint $i >> $LOG_FILE_SUCCESS
+ 	   	do
+			yamllint -c $WD/.yamllint $i >> $LOG_FILE_SUCCESS
 			echo "---------------------------------"
 		done
 }
