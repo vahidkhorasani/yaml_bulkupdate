@@ -4,8 +4,10 @@ WD="$HOME/Yaml-BulkUpdate"
 	if [[ ! -d $WD || $(ls $WD) == "" ]];then
 	    mkdir -p $WD
 	    cat <<- EOF
-		"$WD is empty, please clone at least one project and 
-		 copy .yamllint file in it for syntax checking !!"
+		"'Yaml-BulkUpdate' is empty in your Home directory,
+		please clone at least one project in it and also
+		copy .yamllint file in it for syntax checking !!"
+		--------------------------------------------------
 		EOF
 	fi
 FILE_LIST="$WD/.list"
@@ -38,9 +40,17 @@ x=2
 # Make test directory to clone your projects into it ! 
 # Use git to clone your project in ~/test if you've not already !
 
-	if [[ ! -f /usr/bin/yamllint ]]; then
-		echo "Please install yamllint before continuing this script !!"
-		echo "--------------------------------------------------------"
+LINT=$(whereis yamllint)
+CHK_LINT=$(echo $LINT | grep yamllint)
+	if [[ ! $CHK_LINT == 1 ]]; then
+		echo "Make sure you have installed yamllint before continuing this script !!"
+		echo "----------------------------------------------------------------------"
+		exit 1
+	fi
+
+	if [[ ! -f $WD/.yamllint ]]; then
+		echo "Oops! Seems you forgot to copy yamllint file to $WD/.yamllint !!!"
+		exit 1
 	fi
 
 function dev_update {
