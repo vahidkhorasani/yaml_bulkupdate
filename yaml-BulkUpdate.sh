@@ -41,7 +41,7 @@ x=2
 # Use git to clone your project in ~/test if you've not already !
 
 LINT=$(whereis yamllint)
-CHK_LINT=$(echo $LINT | grep yamllint)
+CHK_LINT=$(echo $LINT | grep -c yamllint)
 	if [[ ! $CHK_LINT == 1 ]]; then
 		echo "Make sure you have installed yamllint before continuing this script !!"
 		echo "----------------------------------------------------------------------"
