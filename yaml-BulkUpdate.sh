@@ -48,7 +48,7 @@ CHK_LINT=$(echo $LINT | grep -c yamllint)
 		exit 1
 	fi
 
-	if [[ ! -f $WD/.yamllint ]]; then
+	if [[ -d $WD && ! -f $WD/.yamllint ]]; then
 		echo "Oops! Seems you forgot to copy yamllint file to $WD/.yamllint !!!"
 		exit 1
 	fi
