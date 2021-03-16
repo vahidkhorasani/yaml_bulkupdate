@@ -52,14 +52,20 @@ CHK_LINT=$(echo $LINT | grep -c yamllint)
 		echo "Oops! Seems you forgot to copy yamllint file to $WD/.yamllint !!!"
 		exit 1
 	fi
-
 function dev_update {
 	for i in $(find $WD/$line/ci/k8s/ -type f -iname "*$line*env-dev")
 		do
-		declare -i DRPL_LINE=$(cat $i | nl | grep RPL | cut -d$'\t' -f1 | sed  's/^ *//g')
-		declare -i DREV_LINE="$DRPL_LINE+1"
-		declare -i DMEM_LINE="$DRPL_LINE+2"
-		declare -i DCPU_LINE="$DRPL_LINE+3"
+		drpl_check=$(grep -c 'RPL' $i)
+		if [[ $rpl_check == 1 ]]; then
+			declare -i DRPL_LINE=$(cat $i | nl | grep RPL | cut -d$'\t' -f1 | sed  's/^ *//g')
+			declare -i DREV_LINE="$DRPL_LINE+1"
+			declare -i DMEM_LINE="$DRPL_LINE+2"
+			declare -i DCPU_LINE="$DRPL_LINE+3"
+		else 
+			declare -i DREV_LINE="1"
+			declare -i DMEM_LINE="2"
+			declare -i DCPU_LINE="3"
+		fi
 		w=$(grep -c REV_HIST_LIM $i)
 		if [[ $w == 0 ]]; then
 			sed -i '/RPL/ a \ \' $i
@@ -80,10 +86,17 @@ function dev_update {
 function stage_update {
 		for i in $(find $WD/$line/ci/k8s/ -iname "*$line*env-stage")
         do
-		declare -i SRPL_LINE=$(cat $i | nl | grep RPL | cut -d$'\t' -f1 | sed  's/^ *//g')
-		declare -i SREV_LINE="$SRPL_LINE+1"
-		declare -i SMEM_LINE="$SRPL_LINE+2"
-		declare -i SCPU_LINE="$SRPL_LINE+3"
+		srpl_check=$(grep -c 'RPL' $i)
+		if [[ $srpl_check == 1 ]]; then
+			declare -i SRPL_LINE=$(cat $i | nl | grep RPL | cut -d$'\t' -f1 | sed  's/^ *//g')
+			declare -i SREV_LINE="$SRPL_LINE+1"
+			declare -i SMEM_LINE="$SRPL_LINE+2"
+			declare -i SCPU_LINE="$SRPL_LINE+3"
+		else
+			declare -i SREV_LINE="1"
+			declare -i SMEM_LINE="2"
+			declare -i SCPU_LINE="3"
+		fi
 		w=$(grep -c REV_HIST_LIM $i)
 		if [[ $w == 0 ]]; then
 			sed -i '/RPL/ a \ \' $i
@@ -104,10 +117,17 @@ function stage_update {
 function prod_update {
 		for i in $(find $WD/$line/ci/k8s/ -iname "*$line*env-prod")
         do
-		declare -i PRPL_LINE=$(cat $i | nl | grep RPL | cut -d$'\t' -f1 | sed  's/^ *//g')
-		declare -i PREV_LINE="$PRPL_LINE+1"
-		declare -i PMEM_LINE="$PRPL_LINE+2"
-		declare -i PCPU_LINE="$PRPL_LINE+3"
+		prpl_check=$(grep -c 'RPL' $i)
+		if [[ $prpl_check == 1 ]]; then
+			declare -i PRPL_LINE=$(cat $i | nl | grep RPL | cut -d$'\t' -f1 | sed  's/^ *//g')
+			declare -i PREV_LINE="$PRPL_LINE+1"
+			declare -i PMEM_LINE="$PRPL_LINE+2"
+			declare -i PCPU_LINE="$PRPL_LINE+3"
+		else
+			declare -i PREV_LINE="1"
+			declare -i PMEM_LINE="2"
+			declare -i PCPU_LINE="3"
+		fi
 		w=$(grep -c REV_HIST_LIM $i)
 		if [[ $w == 0 ]]; then
 			sed -i '/RPL/ a \ \' $i
@@ -128,14 +148,14 @@ function prod_update {
 function deploy_update {
 		for i in $(find $WD/$line/ci/k8s/ -iname "*$line*deployment.yaml")
         do
-		declare -i RPL_NUM=$(cat $i | grep RPL | sed '1s/[^ \t]//g' | wc -c)
+		declare -i RPL_NUM=$(cat $i | grep 'replicas:' | sed '1s/[^ \t]//g' | wc -c)
 		declare -i REV_NUM="$RPL_NUM-2"
-		declare -i RPL_LINE=$(cat $i | nl | grep RPL | cut -d$'\t' -f1 | sed  's/^ *//g')
+		declare -i RPL_LINE=$(cat $i | nl | grep 'replicas:' | cut -d$'\t' -f1 | sed  's/^ *//g')
 		#declare -i RPL_LINE=$(awk '/RPL/{ print NR; exit }' $i)
 		declare -i REV_LINE="$RPL_LINE+1"
 		w=$(grep -c revisionHistoryLimit $i)
 		if [[ $w == 0 ]]; then
-			sed -i '/RPL/ a \ \' $i
+			sed -i '/replicas:/ a \ \' $i
 			printf "%*s%s" $REV_NUM '' "$rev" | sed -i "${REV_LINE}"'e cat /dev/stdin' $i
 		fi
 		declare -i NUM_SPC=$(cat $i | grep imagePullPolicy | sed '1s/[^ \t]//g' | wc -c)
