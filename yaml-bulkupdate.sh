@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Make sure you have 'git & yamllint' installed on your system before going any further !
 WD="$HOME/Yaml-BulkUpdate"
 	if [[ ! -d $WD || $(ls $WD) == "" ]];then
@@ -48,7 +48,7 @@ CHK_LINT=$(echo $LINT | grep -c yamllint)
 		exit 1
 	fi
 
-	if [[ -d $WD && ! -f $WD/.yamllint ]]; then
+	if [[ -d $WD && ! $(ls $WD) == "" && ! -f $WD/.yamllint ]]; then
 		echo "Oops! Seems you forgot to copy yamllint file to $WD/.yamllint !!!"
 		exit 1
 	fi
