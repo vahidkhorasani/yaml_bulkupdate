@@ -121,7 +121,7 @@ function stage_update {
 				sed -i '/RSRC_MEM_LIM/ a \ \' $i
 				printf "%*s%s" $x '' "$scpu_lim" | sed -i "${SCPU_LINE}"'e cat /dev/stdin' $i
 			fi
-		elif [[ $srpl_check == 1 ]]
+		elif [[ $srpl_check == 1 ]]; then
 			declare -i SRPL_LINE=$(cat $i | nl | grep RPL | cut -d$'\t' -f1 | sed  's/^ *//g')
 			declare -i SREV_LINE="$SRPL_LINE+1"
 			declare -i SMEM_LINE="$SRPL_LINE+2"
