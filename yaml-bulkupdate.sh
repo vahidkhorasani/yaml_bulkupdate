@@ -40,7 +40,7 @@ x=2
 # Make test directory to clone your projects into it ! 
 # Use git to clone your project in ~/test if you've not already !
 
-LINT=$(whereis yamllint)
+LINT=$(which yamllint)
 CHK_LINT=$(echo $LINT | grep -c yamllint)
 	if [[ ! $CHK_LINT == 1 ]]; then
 		echo "Make sure you have installed yamllint before continuing this script !!"
