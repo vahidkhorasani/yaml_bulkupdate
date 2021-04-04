@@ -55,9 +55,9 @@ CHK_LINT=$(echo $LINT | grep -c yamllint)
 function dev_update {
 	for i in $(find $WD/$line/ci/k8s/ -type f -iname "*$line*env-dev")
 		do
-		drpl_check=$(grep -c 'RPL' $i)
-		if [[ $rpl_check == 1 ]]; then
-			declare -i DRPL_LINE=$(cat $i | nl | grep RPL | cut -d$'\t' -f1 | sed  's/^ *//g')
+		drpl_check=$(grep -c "\RPL\b" $i)
+		if [[ $drpl_check == 1 ]]; then
+			declare -i DRPL_LINE=$(cat $i | nl | grep "\RPL\b" | cut -d$'\t' -f1 | sed  's/^ *//g')
 			declare -i DREV_LINE="$DRPL_LINE+1"
 			declare -i DMEM_LINE="$DRPL_LINE+2"
 			declare -i DCPU_LINE="$DRPL_LINE+3"
@@ -67,8 +67,11 @@ function dev_update {
 			declare -i DCPU_LINE="3"
 		fi
 		w=$(grep -c REV_HIST_LIM $i)
-		if [[ $w == 0 ]]; then
-			sed -i '/RPL/ a \ \' $i
+		if [[ $w == 0 && $drpl_check == 1 ]]; then
+			sed -i '/RPL=/ a \ \' $i
+			printf "%*s%s" $x '' "$drev_lim" | sed -i "${DREV_LINE}"'e cat /dev/stdin' $i
+		elif [[ $w == 0 && $drpl_check == 0 ]]; then
+			sed -i '1i\\' $i
 			printf "%*s%s" $x '' "$drev_lim" | sed -i "${DREV_LINE}"'e cat /dev/stdin' $i
 		fi
 		w=$(grep -c RSRC_MEM_LIM $i)
@@ -86,9 +89,9 @@ function dev_update {
 function stage_update {
 		for i in $(find $WD/$line/ci/k8s/ -iname "*$line*env-stage")
         do
-		srpl_check=$(grep -c 'RPL' $i)
+		srpl_check=$(grep -c "\RPL\b" $i)
 		if [[ $srpl_check == 1 ]]; then
-			declare -i SRPL_LINE=$(cat $i | nl | grep RPL | cut -d$'\t' -f1 | sed  's/^ *//g')
+			declare -i SRPL_LINE=$(cat $i | nl | grep "\RPL\b" | cut -d$'\t' -f1 | sed  's/^ *//g')
 			declare -i SREV_LINE="$SRPL_LINE+1"
 			declare -i SMEM_LINE="$SRPL_LINE+2"
 			declare -i SCPU_LINE="$SRPL_LINE+3"
@@ -98,9 +101,13 @@ function stage_update {
 			declare -i SCPU_LINE="3"
 		fi
 		w=$(grep -c REV_HIST_LIM $i)
-		if [[ $w == 0 ]]; then
-			sed -i '/RPL/ a \ \' $i
+		if [[ $w == 0 && $srpl_check == 1 ]]; then
+			sed -i '/RPL=/ a \ \' $i
 			printf "%*s%s" $x '' "$srev_lim" | sed -i "${SREV_LINE}"'e cat /dev/stdin' $i
+		elif [[ $w == 0 && $srpl_check == 0 ]]; then
+			sed -i '1i\\' $i
+			printf "%*s%s" $x '' "$srev_lim" | sed -i "${SREV_LINE}"'e cat /dev/stdin' $i
+
 		fi
 		w=$(grep -c RSRC_MEM_LIM $i)
 		if [[ $w == 0 ]]; then
@@ -117,9 +124,9 @@ function stage_update {
 function prod_update {
 		for i in $(find $WD/$line/ci/k8s/ -iname "*$line*env-prod")
         do
-		prpl_check=$(grep -c 'RPL' $i)
+		prpl_check=$(grep -c "\RPL\b" $i)
 		if [[ $prpl_check == 1 ]]; then
-			declare -i PRPL_LINE=$(cat $i | nl | grep RPL | cut -d$'\t' -f1 | sed  's/^ *//g')
+			declare -i PRPL_LINE=$(cat $i | nl | grep "\RPL\b" | cut -d$'\t' -f1 | sed  's/^ *//g')
 			declare -i PREV_LINE="$PRPL_LINE+1"
 			declare -i PMEM_LINE="$PRPL_LINE+2"
 			declare -i PCPU_LINE="$PRPL_LINE+3"
@@ -129,8 +136,11 @@ function prod_update {
 			declare -i PCPU_LINE="3"
 		fi
 		w=$(grep -c REV_HIST_LIM $i)
-		if [[ $w == 0 ]]; then
-			sed -i '/RPL/ a \ \' $i
+		if [[ $w == 0 && $prpl_check == 1 ]]; then
+			sed -i '/RPL=/ a \ \' $i
+			printf "%*s%s" $x '' "$prev_lim" | sed -i "${PREV_LINE}"'e cat /dev/stdin' $i
+		elif [[ $w == 0 && $prpl_check == 0 ]]; then
+			sed -i '1i\\' $i
 			printf "%*s%s" $x '' "$prev_lim" | sed -i "${PREV_LINE}"'e cat /dev/stdin' $i
 		fi
 		w=$(grep -c RSRC_MEM_LIM $i)
