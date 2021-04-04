@@ -40,7 +40,7 @@ x=2
 # Make test directory to clone your projects into it ! 
 # Use git to clone your project in ~/test if you've not already !
 
-LINT=$(whereis yamllint)
+LINT=$(which yamllint)
 CHK_LINT=$(echo $LINT | grep -c yamllint)
 	if [[ ! $CHK_LINT == 1 ]]; then
 		echo "Make sure you have installed yamllint before continuing this script !!"
@@ -55,6 +55,7 @@ CHK_LINT=$(echo $LINT | grep -c yamllint)
 function dev_update {
 	for i in $(find $WD/$line/ci/k8s/ -type f -iname "*$line*env-dev")
 		do
+<<<<<<< HEAD
 		drpl_check=$(grep -c "\RPL\b" $i)
 		if [[ $drpl_check == 1 ]]; then
 			declare -i DRPL_LINE=$(cat $i | nl | grep "\RPL\b" | cut -d$'\t' -f1 | sed  's/^ *//g')
@@ -83,12 +84,55 @@ function dev_update {
 		if [[ $w == 0 ]]; then
 			sed -i '/RSRC_MEM_LIM/ a \ \' $i
 			printf "%*s%s" $x '' "$dcpu_lim" | sed -i "${DCPU_LINE}"'e cat /dev/stdin' $i
+=======
+		drpl_check=$(grep -c 'RPL' $i)
+		if [[ $rpl_check == 0 ]]; then
+			declare -i DREV_LINE="2"
+			declare -i DMEM_LINE="3"
+			declare -i DCPU_LINE="4"
+			w=$(grep -c REV_HIST_LIM $i)
+			if [[ $w == 0 ]]; then
+				sed -i '1 s/$/\n/' $i
+				printf "%*s%s" $x '' "$drev_lim" | sed -i "${DREV_LINE}"'e cat /dev/stdin' $i
+			fi
+			w=$(grep -c RSRC_MEM_LIM $i)
+			if [[ $w == 0 ]]; then
+				sed -i '/REV_HIST_LIM/ a \ \' $i
+				printf "%*s%s" $x '' "$dmem_lim" | sed -i "${DMEM_LINE}"'e cat /dev/stdin' $i
+			fi
+			w=$(grep -c RSRC_CPU_LIM $i)
+			if [[ $w == 0 ]]; then
+				sed -i '/RSRC_MEM_LIM/ a \ \' $i
+				printf "%*s%s" $x '' "$dcpu_lim" | sed -i "${DCPU_LINE}"'e cat /dev/stdin' $i
+			fi
+		elif [[ $rpl_check == 1 ]]; then
+			declare -i DRPL_LINE=$(cat $i | nl | grep RPL | cut -d$'\t' -f1 | sed  's/^ *//g')
+			declare -i DREV_LINE="$DRPL_LINE+1"
+			declare -i DMEM_LINE="$DRPL_LINE+2"
+			declare -i DCPU_LINE="$DRPL_LINE+3"
+			w=$(grep -c REV_HIST_LIM $i)
+			if [[ $w == 0 ]]; then
+				sed -i '/RPL/ a \ \' $i
+				printf "%*s%s" $x '' "$drev_lim" | sed -i "${DREV_LINE}"'e cat /dev/stdin' $i
+			fi
+			w=$(grep -c RSRC_MEM_LIM $i)
+			if [[ $w == 0 ]]; then
+				sed -i '/REV_HIST_LIM/ a \ \' $i
+				printf "%*s%s" $x '' "$dmem_lim" | sed -i "${DMEM_LINE}"'e cat /dev/stdin' $i
+			fi
+			w=$(grep -c RSRC_CPU_LIM $i)
+			if [[ $w == 0 ]]; then
+				sed -i '/RSRC_MEM_LIM/ a \ \' $i
+				printf "%*s%s" $x '' "$dcpu_lim" | sed -i "${DCPU_LINE}"'e cat /dev/stdin' $i
+			fi
+>>>>>>> 1b9714d98ee6960b670d5f7b929d5c1afbaac6c5
 		fi
         done
 }
 function stage_update {
 		for i in $(find $WD/$line/ci/k8s/ -iname "*$line*env-stage")
         do
+<<<<<<< HEAD
 		srpl_check=$(grep -c "\RPL\b" $i)
 		if [[ $srpl_check == 1 ]]; then
 			declare -i SRPL_LINE=$(cat $i | nl | grep "\RPL\b" | cut -d$'\t' -f1 | sed  's/^ *//g')
@@ -118,12 +162,55 @@ function stage_update {
 		if [[ $w == 0 ]]; then
 			sed -i '/RSRC_MEM_LIM/ a \ \' $i
 			printf "%*s%s" $x '' "$scpu_lim" | sed -i "${SCPU_LINE}"'e cat /dev/stdin' $i
+=======
+		srpl_check=$(grep -c 'RPL' $i)
+		if [[ $srpl_check == 0 ]]; then
+			declare -i SREV_LINE="2"
+			declare -i SMEM_LINE="3"
+			declare -i SCPU_LINE="4"
+			w=$(grep -c REV_HIST_LIM $i)
+			if [[ $w == 0 ]]; then
+				sed -i '1 s/$/\n/' $i
+				printf "%*s%s" $x '' "$srev_lim" | sed -i "${SREV_LINE}"'e cat /dev/stdin' $i
+			fi
+			w=$(grep -c RSRC_MEM_LIM $i)
+			if [[ $w == 0 ]]; then
+				sed -i '/REV_HIST_LIM/ a \ \' $i
+				printf "%*s%s" $x '' "$smem_lim" | sed -i "${SMEM_LINE}"'e cat /dev/stdin' $i
+			fi
+			w=$(grep -c RSRC_CPU_LIM $i)
+			if [[ $w == 0 ]]; then
+				sed -i '/RSRC_MEM_LIM/ a \ \' $i
+				printf "%*s%s" $x '' "$scpu_lim" | sed -i "${SCPU_LINE}"'e cat /dev/stdin' $i
+			fi
+		elif [[ $srpl_check == 1 ]]; then
+			declare -i SRPL_LINE=$(cat $i | nl | grep RPL | cut -d$'\t' -f1 | sed  's/^ *//g')
+			declare -i SREV_LINE="$SRPL_LINE+1"
+			declare -i SMEM_LINE="$SRPL_LINE+2"
+			declare -i SCPU_LINE="$SRPL_LINE+3"
+			w=$(grep -c REV_HIST_LIM $i)
+			if [[ $w == 0 ]]; then
+				sed -i '/RPL/ a \ \' $i
+				printf "%*s%s" $x '' "$srev_lim" | sed -i "${SREV_LINE}"'e cat /dev/stdin' $i
+			fi
+			w=$(grep -c RSRC_MEM_LIM $i)
+			if [[ $w == 0 ]]; then
+				sed -i '/REV_HIST_LIM/ a \ \' $i
+				printf "%*s%s" $x '' "$smem_lim" | sed -i "${SMEM_LINE}"'e cat /dev/stdin' $i
+			fi
+			w=$(grep -c RSRC_CPU_LIM $i)
+			if [[ $w == 0 ]]; then
+				sed -i '/RSRC_MEM_LIM/ a \ \' $i
+				printf "%*s%s" $x '' "$scpu_lim" | sed -i "${SCPU_LINE}"'e cat /dev/stdin' $i
+			fi
+>>>>>>> 1b9714d98ee6960b670d5f7b929d5c1afbaac6c5
 		fi
         done
 }
 function prod_update {
 		for i in $(find $WD/$line/ci/k8s/ -iname "*$line*env-prod")
         do
+<<<<<<< HEAD
 		prpl_check=$(grep -c "\RPL\b" $i)
 		if [[ $prpl_check == 1 ]]; then
 			declare -i PRPL_LINE=$(cat $i | nl | grep "\RPL\b" | cut -d$'\t' -f1 | sed  's/^ *//g')
@@ -152,6 +239,48 @@ function prod_update {
 		if [[ $w == 0 ]]; then
 			sed -i '/RSRC_MEM_LIM/ a \ \' $i
 			printf "%*s%s" $x '' "$pcpu_lim" | sed -i "${PCPU_LINE}"'e cat /dev/stdin' $i
+=======
+		prpl_check=$(grep -c 'RPL' $i)
+		if [[ $prpl_check == 0 ]]; then
+			declare -i PREV_LINE="1"
+			declare -i PMEM_LINE="2"
+			declare -i PCPU_LINE="3"
+			w=$(grep -c REV_HIST_LIM $i)
+			if [[ $w == 0 ]]; then
+				sed -i '1 s/$/\n/' $i
+				printf "%*s%s" $x '' "$prev_lim" | sed -i "${PREV_LINE}"'e cat /dev/stdin' $i
+			fi
+			w=$(grep -c RSRC_MEM_LIM $i)
+			if [[ $w == 0 ]]; then
+				sed -i '/REV_HIST_LIM/ a \ \' $i
+				printf "%*s%s" $x '' "$pmem_lim" | sed -i "${PMEM_LINE}"'e cat /dev/stdin' $i
+			fi
+			w=$(grep -c RSRC_CPU_LIM $i)
+			if [[ $w == 0 ]]; then
+				sed -i '/RSRC_MEM_LIM/ a \ \' $i
+				printf "%*s%s" $x '' "$pcpu_lim" | sed -i "${PCPU_LINE}"'e cat /dev/stdin' $i
+			fi
+		elif [[ $prpl_check == 1 ]]; then
+			declare -i PRPL_LINE=$(cat $i | nl | grep RPL | cut -d$'\t' -f1 | sed  's/^ *//g')
+			declare -i PREV_LINE="$PRPL_LINE+1"
+			declare -i PMEM_LINE="$PRPL_LINE+2"
+			declare -i PCPU_LINE="$PRPL_LINE+3"
+			w=$(grep -c REV_HIST_LIM $i)
+			if [[ $w == 0 ]]; then
+				sed -i '/RPL/ a \ \' $i
+				printf "%*s%s" $x '' "$prev_lim" | sed -i "${PREV_LINE}"'e cat /dev/stdin' $i
+			fi
+			w=$(grep -c RSRC_MEM_LIM $i)
+			if [[ $w == 0 ]]; then
+				sed -i '/REV_HIST_LIM/ a \ \' $i
+				printf "%*s%s" $x '' "$pmem_lim" | sed -i "${PMEM_LINE}"'e cat /dev/stdin' $i
+			fi
+			w=$(grep -c RSRC_CPU_LIM $i)
+			if [[ $w == 0 ]]; then
+				sed -i '/RSRC_MEM_LIM/ a \ \' $i
+				printf "%*s%s" $x '' "$pcpu_lim" | sed -i "${PCPU_LINE}"'e cat /dev/stdin' $i
+			fi
+>>>>>>> 1b9714d98ee6960b670d5f7b929d5c1afbaac6c5
 		fi
         done
 }
